@@ -1,0 +1,152 @@
+This is my roadmap for this project and i will upload soon a complete project.
+https://www.notion.so/Project-Vivado-VLSI-9a5d936922ab4c1fbd4ee27d14ac74cd
+https://www.notion.so/Vivado-FPGA-First-Project-df068b3bdc2d495f945f3deaf8d4e5fa
+
+I will copy here my idea for project and my current situation with a project. (this code also you can se on those links)
+This will be my project for VLSI - Implements LED's with button's, and colored LED's 
+implements like Dff.
+
+Pricipe of working:
+
+This means that each push on button represent a binary number - 1,2,4,8 and with pressing 
+combination of button's we will se a sum of this numbers (like btn0, btn1 => 0001+0010 = 0011)
+btn0 -> 0001
+btn1 -> 0010
+btn2 -> 0100
+btn3 -> 1000
+btn0, btn1 -> 0011
+btn0, btn2 -> 0101
+btn0, btn3 -> 1001
+btn1, btn2 -> 0110
+btn1, btn3 -> 1010
+btn2, btn3 -> 1100
+btn0, btn1, btn2 -> 0111
+btn0, btn1, btn3 -> 1011
+btn0, btn2, btn3 -> 1101
+btn1, btn2, btn3 -> 1110
+btn0, btn1, btn3, btn4 -> 1111
+And for RGB LED's ld4 and ld5, where ld4 is B, and LD5 is G we will have clk, reset
+clk about 5ns and with posedge (positive edge) we will have blink on ld4 or ld5
+ld4 is like Q, and ld5 is like ~Q
+
+-- and this is code (i currently can't implement and see all the errors i have because i don't have program installed on my PC because of bad internet connectin)
+-- projectVLSI.v
+
+module project_VLSI(
+	input btn0,btn1,btn2,btn3,
+	input sw0,sw1,
+	output reg ld0,ld1,ld2,ld3,ld4,ld5
+); 
+always@(sw0 or sw1)
+	ld0 = 0;
+	ld1 = 0;
+	ld2 = 0;
+	ld3 = 0;
+	ld4 = 0;
+	ld5 = 0;
+	if(sw0) begin
+		if(btn0) begin
+			ld0 = 1;
+			ld1 = 0;
+			ld2 = 0;
+			ld3 = 0; end
+	if(btn1) begin
+			ld0 = 0;
+			ld1 = 1;
+			ld2 = 0;
+			ld3 = 0; end
+	if(btn2) begin
+			ld0 = 0;
+			ld1 = 0;
+			ld2 = 1;
+			ld3 = 0; end
+	if(btn3) begin
+			ld0 = 0;
+			ld1 = 0;
+			ld2 = 0;
+			ld3 = 1; end
+	if(btn0 and btn1) begin
+			ld0 = 1;
+			ld1 = 1;
+			ld2 = 0;
+			ld3 = 0; end
+	if(btn0 and btn2) begin
+			ld0 = 1;
+			ld1 = 0;
+			ld2 = 1;
+			ld3 = 0; end
+	if(btn0 and btn3) begin
+			ld0 = 1;
+			ld1 = 0;
+			ld2 = 0;
+			ld3 = 1; end
+	if(btn1 and btn2) begin
+			ld0 = 0;
+			ld1 = 1;
+			ld2 = 1;
+			ld3 = 0; end
+	if(btn1 and btn3) begin
+			ld0 = 0;
+			ld1 = 1;
+			ld2 = 0;
+			ld3 = 1; end
+	if(btn2 and btn3) begin
+			ld0 = 0;
+			ld1 = 1;
+			ld2 = 1;
+			ld3 = 1; end	
+	if(btn0 and btn1 and btn2) begin
+			ld0 = 1;
+			ld1 = 1;
+			ld2 = 1;
+			ld3 = 0; end
+	if(btn0 and btn2 and btn3) begin
+			ld0 = 1;
+			ld1 = 0;
+			ld2 = 1;
+			ld3 = 1; end
+	if(btn1 and btn2 and btn3) begin
+			ld0 = 0;
+			ld1 = 1;
+			ld2 = 1;
+			ld3 = 1; end
+	if(btn0 and btn1 and btn2 and btn3) begin
+			ld0 = 1;
+			ld1 = 1;
+			ld2 = 1;
+			ld3 = 1; end
+	end
+if(sw1) begin
+	always@(posedge clk) begin
+		if(sw0 and sw1) begin 
+				ld5 = 0;
+				ld6 = 1; end
+		else begin
+				ld5 = 1;
+				ld6 = 1; end
+		end
+	end
+endmodule
+
+
+-- constraintVLSI.xdc
+
+## btn0, btn1, btn2, btn3
+set_property - dict{PACKAGE_PIN D19 IOSTANDARD LVCMOS33} [get_ports(btn0)];
+set_property - dict{PACKAGE_PIN D20 IOSTANDARD LVCMOS33} [get_ports(btn1)];
+set_property - dict{PACKAGE_PIN L20 IOSTANDARD LVCMOS33} [get_ports(btn2)];
+set_property - dict{PACKAGE_PIN L19 IOSTANDARD LVCMOS33} [get_ports(btn3)];
+
+## sw0, sw1
+set_property - dict{PACKAGE_PIN M20 IOSTANDARD LVCMOS33} [get_ports(sw0)];
+set_property - dict{PACKAGE_PIN M19 IOSTANDARD LVCMOS33} [get_ports(sw1)];
+
+## ld0, ld1, ld2, ld3
+set_property - dict{PACKAGE_PIN R14 IOSTANDARD LVCMOS33} [get_ports(ld0)];
+set_property - dict{PACKAGE_PIN P14 IOSTANDARD LVCMOS33} [get_ports(ld1)];
+set_property - dict{PACKAGE_PIN N16 IOSTANDARD LVCMOS33} [get_ports(ld2)];
+set_property - dict{PACKAGE_PIN M14 IOSTANDARD LVCMOS33} [get_ports(ld3)];
+
+## ld5, ld6 -> RGB leds => ld5 green, ld6 red
+set_property - dict{PACKAGE_PIN L14 IOSTANDARD LVCMOS33} [get_ports(ld5)];
+set_property - dict{PACKAGE_PIN L15 IOSTANDARD LVCMOS33} [get_ports(ld6)];
